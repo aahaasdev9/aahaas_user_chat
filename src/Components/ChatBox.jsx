@@ -6,13 +6,41 @@ import { faPaperPlane, faComments, faUserTie, faCircleUser, faCircleXmark, faPlu
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useAuthState } from 'react-firebase-hooks/auth';
 import GetChatsBox from './GetChatsBox';
+import pic from "./img/Customer.png"
 // import QuestionAnswerOutlinedIcon from '@mui/icons-material/QuestionAnswerOutlined';
+import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 
 function ChatBox() {
 
   const [user] = useAuthState(auth);
   const [messages, setMessages] = useState([]);
   const [usermessage, setusermessage] = useState('');
+
+  useEffect(() => {
+    console.log(user);
+    const q = query(
+      collection(db, "chats/chats_dats/" + user.uid),
+      orderBy("createdAt", "desc"),
+      limit(50)
+    );
+
+    const unsubscribe = onSnapshot(q, (QuerySnapshot) => {
+      const fetchedMessages = [];
+      QuerySnapshot.forEach((doc) => {
+        fetchedMessages.push({ ...doc.data(), id: doc.id });
+      });
+      const sortedMessages = fetchedMessages.sort(
+        (a, b) => a.createdAt - b.createdAt
+      );
+      setMessages(sortedMessages);
+    });
+    return () => unsubscribe();
+  }, []);
+
+
+
+
+
   const [isOpen, setIsOpen] = useState(false);
 
   const [chatCount, setChatCount] = useState(0);
@@ -87,11 +115,25 @@ function ChatBox() {
     return () => unsubscribe();
   }, []);
 
+  const getTime = (value, type) => {
+    if (value?.seconds !== undefined && value?.nanoseconds !== undefined) {
+      const ts = (value.seconds + value.nanoseconds / 1000000000) * 1000;
+      if (type === "value1") {
+        return new Date(ts).toLocaleDateString();
+      }
+      if (type === "value2") {
+        return new Date(ts).toDateString();
+      }
+    }
+    return '';
+  };
+
+
   return (
 
     <>
 
-      
+
       <button
         className={`btn btn-primary border d-flex justify-content-between chat_button ${isOpen ? 'open' : 'close'}`} onClick={() => { setIsOpen(!isOpen) }}>
         <p className='m-0 p-1'><FontAwesomeIcon icon={faComments} /></p>
@@ -169,7 +211,7 @@ function ChatBox() {
           {
             chatArr.map(value => (
               // <p>{value}</p>
-              <GetChatsBox value={value}/>
+              <GetChatsBox value={value} />
             ))
           }
         </div>
@@ -177,71 +219,59 @@ function ChatBox() {
       </div>
 
 
-      <div className='chat_main_box'>
-        {/* <button className="button_chat" onClick={handleClick}>
-        <a href="javascript:;" class="code_view actionBtn8">
-          <span class="txt"><ChatIcon></ChatIcon></span>
-          <span class="txt_slide">Chat WithUs</span>
-          <span class="btn_ico">
-            <span>
-              <img src="http://css3studio.com/images/effect_ex/ico_play_2.png" alt="" />
-            </span>
-          </span> 
-        </a>
-      </button> */}
+      <div className={`text_area content_main ${isOpen ? 'open' : ''}`}>
 
-
-
-
-
-
-        <div>
-
-          <div className="chat_text_area_main">
-            <p className="chat_text_area_heading">Aahaas support team</p>
-            {/* <FontAwesomeIcon icon={faUpRightAndDownLeftFromCenter} className="chat_info_icon chat_info_icon2" /> */}
+        <div className="chat_text_area_main">
+          <div className="d-flex chat_text_area_heading">
+            <img src={pic} className="profile-pic" />
+            <div className="ms-3">
+              <p>{user.displayName}</p>
+              <span>{Date(user?.reloadUserInfo?.lastRefreshAt).slice(0, 24) || 'No valid date'}</span>
+            </div>
+            <span className='ms-auto me-3'><CloseRoundedIcon /></span>
           </div>
-          <div className="suggestions_message">
-            <p>suuggesion 1</p>
-            <p>suuggesion 2</p>
-            <p>suuggesion 3</p>
-            <p>suuggesion 4</p>
-          </div>
+          {/* Additional elements or code if needed */}
+        </div>
 
-          <div className="chats_content">
+        {/* <div className="suggestions_message">
+    <p>suuggesion 1</p>
+    <p>suuggesion 2</p>
+    <p>suuggesion 3</p>
+    <p>suuggesion 4</p>
+  </div> */}
 
-            {
-              messages.map((value, key) => {
-                return (
-                  <span className="chat_msg">
+        <div className="chats_content">
 
-                    <div className={`${value.uid === user.uid ? "chat-bubble right" : "chat-bubble left"}`}>
-                      <p className="d-flex align-items-center justify-content-around">
-                        <FontAwesomeIcon icon={faUserTie} className="admin_icon" style={{ display: `${key % 2 === 0 && key !== 3 && key !== 7 ? "none" : "block"}` }} />
-                        {value.text}
-                        <FontAwesomeIcon icon={faCircleUser} className="customer_icon" style={{ display: `${key % 2 === 1 ? "none" : "block"}` }} />
-                      </p>
-                      <span className="time">today mor 12.30</span>
-                    </div>
+          {
+            messages.map((value, key) => {
+              return (
+                <span className="chat_msg">
 
-                  </span>
-                )
-              })
-            }
+                  <div className={`${value.uid === user.uid ? "chat-bubble right" : "chat-bubble left"}`}>
+                    <p>{value.text}</p>
+                    <span className="time"></span>
+                  </div>
 
-          </div>
-
-
-
-          <div className="message_area input-group mb-3" onClick={sendMessage} >
-
-            <input type="text" className="message " value={usermessage} placeholder="Enter your message here..." onChange={(e) => setusermessage(e.target.value)} />
-            <button className="send_button">Send
-              <FontAwesomeIcon icon={faPaperPlane} className="chat_send_icon" /></button>
-          </div>
+                </span>
+              )
+            })
+          }
 
         </div>
+
+
+
+        <div className="message_area input-group mb-3" onClick={sendMessage} >
+
+          <input type="text" className="message " value={usermessage} placeholder="Enter your message here..." onChange={(e) => setusermessage(e.target.value)} />
+          <button className="send_button">Send
+            <FontAwesomeIcon icon={faPaperPlane} className="chat_send_icon" /></button>
+        </div>
+
       </div>
+
+
+
     </>
 
   )

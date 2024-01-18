@@ -135,14 +135,13 @@
 }
 
 
-
 .chat_text_area_heading {
-  padding-left: 25px;
-  padding-top: 10px;
+  padding-left: 12px;
+  padding-top: 11px;
   background-color: #3b7ddecf;
   color: white;
   border-radius: 5px;
-  padding-bottom: 10px;
+  padding-bottom: 0px;
 }
 
 .message_area {
@@ -163,20 +162,21 @@
   width: 70%;
   margin-right: 10px;
   text-transform: capitalize;
+  border-radius: 16px;
 }
 
 .send_button {
-  padding: 10px;
+  padding: -47px;
   border: 0;
+  border-radius: 12px;
   width: 20%;
   outline: 0;
   background-color: blue;
   color: white;
 }
 
-
 .chats_content {
-  height: 300px;
+  height: 390px;
   text-transform: capitalize;
   margin: 0 10px;
   overflow: scroll;
@@ -207,9 +207,9 @@
   width: fit-content;
 }
 
-.chat-bubble {
+.chat-bubble.left {
   padding: 0 20px;
-  height: 40px;
+  margin-right: auto;
 }
 
 .chat-bubble.right {
@@ -250,6 +250,31 @@
   overflow: scroll;
   justify-content: space-around;
 }
+
+.profile-pic {
+  width: 30px;
+  /* Adjust as needed */
+  height: 30px;
+  /* Adjust as needed */
+  overflow: hidden;
+  /* Ensure the image doesn't exceed the specified dimensions */
+  border-radius: 50%;
+  /* To make it a circular profile pic */
+}
+
+.profile-pic img {
+  width: 100%;
+  /* Make the image fill its container */
+  height: auto;
+  /* Maintain the aspect ratio */
+  display: block;
+  /* Remove extra space below the image */
+}
+
+
+
+
+
 
 .suggestions_message p {
   color: white;
@@ -480,6 +505,12 @@
 }
 
 
+.text_area {
+  border: 1px solid lightblue;
+  /* background-color: lightblue;  */
+  background-color: #d9e6e7;
+  border-radius: 20px;
+}
 
 
 /* .text_area.open {
