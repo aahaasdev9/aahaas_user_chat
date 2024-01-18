@@ -1,3 +1,130 @@
+.chat_button {
+  border: 1px solid black;
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  padding: 15px;
+  font-size: 15px;
+}
+
+.chat_button.open {
+  display: block;
+}
+
+.chat_button.close {
+  display: none;
+}
+
+.chat_area {
+  border: 1px solid lightblue;
+  background-color: #d9e6e7;
+  border-radius: 0 0 10px 10px;
+  width: 20vw;
+  /* position: fixed; */
+  /* bottom: 80px; */
+  /* right: -90%; */
+  /* height: 70vh; */
+}
+
+.chat_area.open {
+  /* Keep the final state after the animation */
+  animation: openchat 0.9s forwards;
+}
+
+@keyframes openchat {
+  0% {
+    right: -90%;
+  }
+
+  100% {
+    right: 10px;
+  }
+}
+
+.user_head {
+  height: 17%;
+  border-bottom: 1px solid white;
+}
+
+.user_head,
+.user_head_update {
+  padding: 10px 10px 10px 0;
+  display: grid;
+  grid-template-areas:
+    'image username closeIcon'
+    'image lastlogin closeIcon';
+}
+
+.user_head .user_image,
+.user_head_update .user_image {
+  width: 50px;
+  height: 50px;
+  grid-area: image;
+  border-radius: 50%;
+  margin: auto;
+  margin-left: 10px;
+}
+
+.user_head .user_name,
+.user_head_update .user_name {
+  margin: 0 10px 0 0;
+  grid-area: username;
+}
+
+.user_head .lost_login,
+.user_head_update .lost_login {
+  grid-area: lastlogin;
+  font-size: 10px;
+  margin: 0 10px;
+}
+
+.user_head .close_icon,
+.user_head_update .close_icon {
+  grid-area: closeIcon;
+  margin: 0px 0px auto auto;
+  font-size: 25px;
+}
+
+.newChat_button {
+  height: 10%;
+  position: absolute;
+  right: 10px;
+  bottom: 0px;
+}
+
+.newChat_button button {
+  font-size: 13px;
+  text-transform: capitalize;
+}
+
+.main_chat_contents {
+  height: 70%;
+  overflow-y: scroll;
+}
+
+.chat_contents {
+  margin: 10px 5px;
+  padding: 10px;
+}
+
+.test{
+  border: 1px solid red;
+  margin: 10px;
+  padding: 100px;
+  position: relative;
+}
+
+.chat_main_box {
+  display: none;
+  position: absolute;
+  right: 10px;
+  bottom: 60px;
+}
+
+
+/* -----------------------------  */
+
+
 .chat_info_icon2 {
   position: absolute;
   right: 20px;
@@ -5,14 +132,6 @@
 
 .chat_send_icon {
   padding-left: 10px;
-}
-
-.content_main {
-  border: 1px solid black;
-  position: absolute;
-  border-radius: 10px;
-  right: 10px;
-  bottom: 10px;
 }
 
 
@@ -34,20 +153,6 @@
 }
 
 
-/* .chat_main_box {
-  width: 450px;
-  margin-top: 225px;
-} */
-
-.chat_main_box {
-  /* width: 450px; */
-  /* margin-top: 404px; */
-  justify-content: flex-end;
-  display: flex;
-  bottom: 0;
-  position: absolute;
-  right: 3%;
-}
 
 .message {
   border: 1px solid black;
@@ -252,6 +357,11 @@
   margin: 1%;
 }
 
+.main_content_chats{
+  border: 1px solid black;
+  height: fit-content;
+}
+
 .main_customer_head {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1.8fr 0.6fr 0.6fr;
@@ -370,21 +480,10 @@
 }
 
 
-.text_area {
-  border: 1px solid lightblue;
-  /* background-color: lightblue;  */
-  background-color: #d9e6e7;
-  border-radius: 20px;
-  width: 30vw;
-  position: fixed;
-  bottom: 60px;
-  right: -100%;
-  height: 70vh;
-}
 
-.text_area.open {
+
+/* .text_area.open {
   animation: openchat 0.5s forwards;
-  /* Keep the final state after the animation */
 }
 
 @keyframes openchat {
@@ -396,7 +495,7 @@
     right: 20px;
   }
 }
-
+ */
 
 
 
@@ -461,13 +560,6 @@
   -moz-transition: transform .5s ease-out .5s;
 }
 
-.actionBtn8 .btn_ico span img {
-  vertical-align: top;
-  opacity: .5;
-  transition: all .2s ease-out .3s;
-  -webkit-transition: all .2s ease-out .3s;
-  -moz-transition: all .2s ease-out .3s;
-}
 
 .actionBtn8 .txt_slide {
   overflow: hidden;
@@ -507,6 +599,7 @@
   -moz-transform: rotateY(180deg);
 }
 
-.actionBtn8:hover .btn_ico span img {
-  opacity: 1;
-}
+
+
+
+/* updated */
