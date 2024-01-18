@@ -7,13 +7,15 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Modal } from 'react-bootstrap';
 import logo from '../../src/logo.svg';
 import { useAuthState } from 'react-firebase-hooks/auth';
-
+import ChatIcon from '@mui/icons-material/Chat';
+// import QuestionAnswerOutlinedIcon from '@mui/icons-material/QuestionAnswerOutlined';
 
 function ChatBox() {
 
   const scroll = useRef();
 
   const [messages, setMessages] = useState([]);
+  
 
   const [user] = useAuthState(auth);
 
@@ -52,7 +54,7 @@ function ChatBox() {
   const sendMessage = async () => {
 
     if (usermessage.trim() === "") {
-      alert("Enter valid message");
+    
       return;
     }
     const { uid, displayName, photoURL } = auth.currentUser;
@@ -69,17 +71,34 @@ function ChatBox() {
 
 
   return (
-    <div>
-
+    <div className='chat_main_box'>
       <button className="button_chat" onClick={handleClick}>
-        chat with us
+       {/* <a href="javascript:;" class="code_view actionBtn12">
+	 <span class="hover">
+   
+	 <span class="line1"></span>
+	 <span class="line2"></span>
+	 <span class="txt">
+	 <span class="txtHidden"> chat with us</span>
+	</span>
+</span>
+</a> */}
+<a href="javascript:;" class="code_view actionBtn8">
+	 <span class="txt"><ChatIcon></ChatIcon></span>
+	 <span class="txt_slide">Chat WithUs</span>
+	 <span class="btn_ico">	
+	 <span>
+		<img src="http://css3studio.com/images/effect_ex/ico_play_2.png" alt="" />
+	</span>
+	</span>
+</a>
       </button>
 
-      <div className={`text_area ${isOpen ? 'open' : ''}`}>
+      <div className={`text_area content_main ${isOpen ? 'open' : ''}`}>
 
         <div className="chat_text_area_main">
           <p className="chat_text_area_heading">Aahaas support team</p>
-          <FontAwesomeIcon icon={faUpRightAndDownLeftFromCenter} className="chat_info_icon chat_info_icon2" />
+          {/* <FontAwesomeIcon icon={faUpRightAndDownLeftFromCenter} className="chat_info_icon chat_info_icon2" /> */}
         </div>
         <div className="suggestions_message">
           <p>suuggesion 1</p>
@@ -113,11 +132,11 @@ function ChatBox() {
 
 
 
-        <div className="message_area input-group mb-3">
+        <div className="message_area input-group mb-3"  onClick={sendMessage} >
 
           <input type="text" className="message " value={usermessage} placeholder="Enter your message here..." onChange={(e) => setusermessage(e.target.value)} />
           <button className="send_button">Send
-            <FontAwesomeIcon icon={faPaperPlane} className="chat_send_icon" onClick={sendMessage} /></button>
+            <FontAwesomeIcon icon={faPaperPlane} className="chat_send_icon"/></button>
         </div>
 
       </div>
