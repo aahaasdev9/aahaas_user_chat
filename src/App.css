@@ -7,23 +7,15 @@
   font-size: 15px;
 }
 
-.chat_button.open {
-  display: block;
-}
-
-.chat_button.close {
-  display: none;
-}
-
 .chat_area {
   border: 1px solid lightblue;
   background-color: #d9e6e7;
   border-radius: 0 0 10px 10px;
   width: 20vw;
-  /* position: fixed; */
-  /* bottom: 80px; */
-  /* right: -90%; */
-  /* height: 70vh; */
+  position: fixed;
+  bottom: 10px;
+  right: -90%;
+  height: 70vh;
 }
 
 .chat_area.open {
@@ -87,9 +79,8 @@
 
 .newChat_button {
   height: 10%;
-  position: absolute;
-  right: 10px;
-  bottom: 0px;
+  margin-top: 10px;
+  margin-left: 190px;
 }
 
 .newChat_button button {
@@ -147,8 +138,6 @@
 .message_area {
   display: flex;
   justify-content: center;
-  position: absolute;
-  bottom: 0;
 }
 
 
@@ -271,11 +260,6 @@
   /* Remove extra space below the image */
 }
 
-
-
-
-
-
 .suggestions_message p {
   color: white;
   background-color: gray;
@@ -383,8 +367,9 @@
 }
 
 .main_content_chats {
-  border: 1px solid black;
   height: fit-content;
+  width: fit-content; 
+  display: flex;
 }
 
 .main_customer_head {
@@ -507,7 +492,6 @@
 
 .text_area {
   border: 1px solid lightblue;
-  /* background-color: lightblue;  */
   background-color: #d9e6e7;
   border-radius: 20px;
 }
