@@ -15,7 +15,7 @@ function ChatBox() {
   const scroll = useRef();
 
   const [messages, setMessages] = useState([]);
-  
+
 
   const [user] = useAuthState(auth);
 
@@ -54,7 +54,7 @@ function ChatBox() {
   const sendMessage = async () => {
 
     if (usermessage.trim() === "") {
-    
+
       return;
     }
     const { uid, displayName, photoURL } = auth.currentUser;
@@ -73,25 +73,25 @@ function ChatBox() {
   return (
     <div className='chat_main_box'>
       <button className="button_chat" onClick={handleClick}>
-       {/* <a href="javascript:;" class="code_view actionBtn12">
-	 <span class="hover">
-   
-	 <span class="line1"></span>
-	 <span class="line2"></span>
-	 <span class="txt">
-	 <span class="txtHidden"> chat with us</span>
-	</span>
-</span>
-</a> */}
-<a href="javascript:;" class="code_view actionBtn8">
-	 <span class="txt"><ChatIcon></ChatIcon></span>
-	 <span class="txt_slide">Chat WithUs</span>
-	 <span class="btn_ico">	
-	 <span>
-		<img src="http://css3studio.com/images/effect_ex/ico_play_2.png" alt="" />
-	</span>
-	</span>
-</a>
+        {/* <a href="javascript:;" class="code_view actionBtn12">
+          <span class="hover">
+
+            <span class="line1"></span>
+            <span class="line2"></span>
+            <span class="txt">
+              <span class="txtHidden"> chat with us</span>
+            </span>
+          </span>
+        </a> */}
+        <a href="javascript:;" class="code_view actionBtn8">
+          <span class="txt"><ChatIcon></ChatIcon></span>
+          <span class="txt_slide">Chat WithUs</span>
+          <span class="btn_ico">
+            <span>
+              <img src="http://css3studio.com/images/effect_ex/ico_play_2.png" alt="" />
+            </span>
+          </span>
+        </a>
       </button>
 
       <div className={`text_area content_main ${isOpen ? 'open' : ''}`}>
@@ -132,11 +132,11 @@ function ChatBox() {
 
 
 
-        <div className="message_area input-group mb-3"  onClick={sendMessage} >
+        <div className="message_area input-group mb-3" onClick={sendMessage} >
 
           <input type="text" className="message " value={usermessage} placeholder="Enter your message here..." onChange={(e) => setusermessage(e.target.value)} />
           <button className="send_button">Send
-            <FontAwesomeIcon icon={faPaperPlane} className="chat_send_icon"/></button>
+            <FontAwesomeIcon icon={faPaperPlane} className="chat_send_icon" /></button>
         </div>
 
       </div>
