@@ -8,7 +8,9 @@ import { Modal } from 'react-bootstrap';
 import logo from '../../src/logo.svg';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import ChatIcon from '@mui/icons-material/Chat';
+import pic from "./img/Customer.png"
 // import QuestionAnswerOutlinedIcon from '@mui/icons-material/QuestionAnswerOutlined';
+import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 
 function ChatBox() {
 
@@ -20,7 +22,7 @@ function ChatBox() {
   const [user] = useAuthState(auth);
 
   useEffect(() => {
-    console.log(user.uid);
+    console.log(user);
     const q = query(
       collection(db, "chats/chats_dats/" + user.uid),
       orderBy("createdAt", "desc"),
@@ -41,6 +43,9 @@ function ChatBox() {
   }, []);
 
   const [usermessage, setusermessage] = useState('');
+
+
+  console.log('lastLoginAt:', user.reloadUserInfo.lastLoginAt);
 
 
   const fromMessages = ['hi', 'how are yoy ?', 'im also fine', 'hello', 'im fine what about you ?', 'good morning', 'hi', 'how are yoy ?', 'im also fine', 'hello', 'im fine what about you ?', 'good morning']
@@ -69,6 +74,19 @@ function ChatBox() {
   }
 
 
+  const getTime = (value, type) => {
+    if (value?.seconds !== undefined && value?.nanoseconds !== undefined) {
+      const ts = (value.seconds + value.nanoseconds / 1000000000) * 1000;
+      if (type === "value1") {
+        return new Date(ts).toLocaleDateString();
+      }
+      if (type === "value2") {
+        return new Date(ts).toDateString();
+      }
+    }
+    return '';
+  };
+
 
   return (
     <div className='chat_main_box'>
@@ -94,18 +112,27 @@ function ChatBox() {
         </a>
       </button>
 
+
       <div className={`text_area content_main ${isOpen ? 'open' : ''}`}>
 
-        <div className="chat_text_area_main">
-          <p className="chat_text_area_heading">Aahaas support team</p>
-          {/* <FontAwesomeIcon icon={faUpRightAndDownLeftFromCenter} className="chat_info_icon chat_info_icon2" /> */}
-        </div>
-        <div className="suggestions_message">
+      <div className="chat_text_area_main">
+  <div className="d-flex chat_text_area_heading">
+    <img src={pic} className="profile-pic" />
+    <div className="ms-3">
+      <p>{user.displayName}</p>
+      <span>{Date(user?.reloadUserInfo?.lastRefreshAt).slice(0, 24) || 'No valid date'}</span>
+    </div>
+    <span className='ms-auto me-3'><CloseRoundedIcon /></span>
+  </div>
+  {/* Additional elements or code if needed */}
+</div>
+
+        {/* <div className="suggestions_message">
           <p>suuggesion 1</p>
           <p>suuggesion 2</p>
           <p>suuggesion 3</p>
           <p>suuggesion 4</p>
-        </div>
+        </div> */}
 
         <div className="chats_content">
 
@@ -115,12 +142,8 @@ function ChatBox() {
                 <span className="chat_msg">
 
                   <div className={`${value.uid === user.uid ? "chat-bubble right" : "chat-bubble left"}`}>
-                    <p className="d-flex align-items-center justify-content-around">
-                      <FontAwesomeIcon icon={faUserTie} className="admin_icon" style={{ display: `${key % 2 === 0 && key !== 3 && key !== 7 ? "none" : "block"}` }} />
-                      {value.text}
-                      <FontAwesomeIcon icon={faCircleUser} className="customer_icon" style={{ display: `${key % 2 === 1 ? "none" : "block"}` }} />
-                    </p>
-                    <span className="time">today mor 12.30</span>
+                    <p>{value.text}</p>
+                    <span className="time"></span>
                   </div>
 
                 </span>
