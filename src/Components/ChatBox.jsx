@@ -82,8 +82,16 @@ function ChatBox() {
   const handleClick = () => {
     setIsOpen(!isOpen)
     console.log(isOpen);
-  }
+ }
 
+  const closeChat = (chatID) => {
+    // Update chatArr by filtering out the chat with the specified chatID
+    const updatedChatArr = chatArr.filter(chat => chat.chat_ID !== chatID);
+    setChatArr(updatedChatArr);
+  
+    // If needed, you can also perform additional cleanup or actions related to closing the chat
+    // ...
+  };
 
   const [messages, setMessages] = useState([]);
   const [usermessage, setusermessage] = useState('');
@@ -131,7 +139,7 @@ function ChatBox() {
   return (
 
     <>
-      <button className={`btn btn-primary border-0 chat_button`} style={{ display: `${isOpen ? 'none' : 'block'}` }} onClick={handleClick}>
+      <button className={`btn btn-primary border-0 chat_button chat_btn`} style={{ display: `${isOpen ? 'none' : 'block'}` }} onClick={handleClick}>
         <p className='m-0 p-1'>
           <FontAwesomeIcon icon={faComments} className='mx-1' />
           chat with us</p>
@@ -176,7 +184,7 @@ function ChatBox() {
                       <p>{user.displayName} ({value.chat_ID}) </p>
                       <span>{Date(user?.reloadUserInfo?.lastRefreshAt).slice(0, 24) || 'No valid date'}</span>
                     </div>
-                    <span className='ms-auto me-3' onClick={() => { setIsOpen(false) }}>X </span>
+                    <span className='ms-auto me-3' onClick={() => { closeChat(value.chat_ID) }}>X </span>
                   </div>
                   {/* Additional elements or code if needed */}
                 </div>
