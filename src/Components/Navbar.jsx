@@ -4,8 +4,6 @@ import { auth } from "../firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { GoogleAuthProvider, signInWithRedirect } from "firebase/auth";
 
-
-
 const NavBar = () => {
   const [user] = useAuthState(auth);
 
@@ -34,8 +32,6 @@ const NavBar = () => {
           />
         </button>
       )}
-
-
     </nav>
   );
 };
