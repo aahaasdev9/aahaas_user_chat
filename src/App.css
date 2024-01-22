@@ -5,6 +5,7 @@
   bottom: 10px;
   padding: 15px;
   font-size: 15px;
+  background-color: #0c356a;
 }
 
 .testing_process_need_to_give_valid_name {
@@ -25,10 +26,6 @@
   right: -100%;
   bottom: 10px;
   height: 70vh;
-}
-
-.chat_btn {
-  background-color: #0c356a;
 }
 
 .chat_area.open {
@@ -74,6 +71,11 @@
 .user_head_update .user_name {
   margin: 0 10px 0 0;
   grid-area: username;
+}
+
+.user_head_update .user_name {
+  width: 200px;
+  word-wrap: break-word;
 }
 
 .user_head .lost_login,
@@ -133,7 +135,7 @@
   border-radius: 10px;
   height: 70vh;
   margin: 0 10px;
-  width: 20vw;
+  width: fit-content;
 }
 
 .chat_text_area_heading {
@@ -212,21 +214,24 @@
   margin-left: 10px;
 }
 
-.chats_content::-webkit-scrollbar {
+.chats_content::-webkit-scrollbar,
+.main_chat_contents::-webkit-scrollbar {
   width: 5px;
 }
 
-.chats_content::-webkit-scrollbar-track {
+.chats_content::-webkit-scrollbar-track,
+.main_chat_contents::-webkit-scrollbar-track {
   background: transparent;
-
 }
 
-.chats_content::-webkit-scrollbar-thumb {
+.chats_content::-webkit-scrollbar-thumb,
+.main_chat_contents::-webkit-scrollbar-thumb {
   border-radius: 50px;
   background: #888;
 }
 
-.chats_content::-webkit-scrollbar-thumb:hover {
+.chats_content::-webkit-scrollbar-thumb:hover,
+.main_chat_contents::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
 
@@ -256,10 +261,11 @@
 
 .chat-bubble.right .time {
   float: left;
+
 }
 
 .chat-bubble .time {
-  color: red;
+  color: gray;
   text-transform: capitalize;
   font-size: 10px;
   float: right;
@@ -521,4 +527,25 @@
   position: absolute;
   right: 10px;
   bottom: 80px;
+}
+
+/* Default styles for all screen sizes */
+
+/* Media query for screens with a maximum width of 600 pixels */
+@media only screen and (max-width: 600px) {
+
+  /* Styles for screens up to 600 pixels wide */
+  .chat_with_us {
+    display: none;
+  }
+}
+
+/* Media query for screens with a minimum width of 601 pixels and a maximum width of 900 pixels */
+@media only screen and (min-width: 601px) and (max-width: 900px) {
+  /* Styles for screens between 601 and 900 pixels wide */
+}
+
+/* Media query for screens with a minimum width of 901 pixels */
+@media only screen and (min-width: 901px) {
+  /* Styles for screens 901 pixels and wider */
 }

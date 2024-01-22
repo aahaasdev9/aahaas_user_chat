@@ -2,66 +2,53 @@ import React, { useEffect, useState } from 'react'
 import 'firebase/analytics';
 import { db, auth } from '../firebase';
 import { addDoc, collection, limit, onSnapshot, orderBy, query, serverTimestamp } from "firebase/firestore";
-import { faPaperPlane, faComments, faRectangleXmark, faSquareCaretDown, faCircleXmark, faPlus, faUserGroup } from '@fortawesome/free-solid-svg-icons'
+import { faPaperPlane, faComments, faRectangleXmark, faCircleXmark, faPlus, faUserGroup } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useAuthState } from 'react-firebase-hooks/auth';
 import pic from './img/Customer.png'
 import axios from 'axios';
-// import QuestionAnswerOutlinedIcon from '@mui/icons-material/QuestionAnswerOutlined';
 
 function ChatBox() {
 
   const [user] = useAuthState(auth);
   const [isOpen, setIsOpen] = useState(false);
   const [chatCount, setChatCount] = useState(0);
+  const [userChats, setUserChats] = useState([]);
   const [chatArr, setChatArr] = useState([]);
   const [messages, setMessages] = useState([]);
-  const [usermessage, setusermessage] = useState('');
 
-  const [userChats, setUserChats] = useState([
-    {
-      chat_ID: '12qw34'
-    },
-    {
-      chat_ID: '23wqew45'
-    },
-    {
-      chat_ID: '322343'
-    },
-    {
-      chat_ID: '32343234'
-    },
-    {
-      chat_ID: '234353'
-    },
-    {
-      chat_ID: '13234234'
-    },
-    {
-      chat_ID: '11213234'
-    },
-    {
-      chat_ID: '1234233'
-    },
-    {
-      chat_ID: '1234323'
-    },
-  ])
+  const [usermessage, setusermessage] = useState({
+    0: '',
+    1: '',
+    2: '',
+  });
 
-  const openChat = (value) => {
-    if (!chatArr.includes(value)) {
+  const handleChangeUserMessage = (inputName, value) => {
+    setusermessage(prevValues => ({
+      ...prevValues,
+      [inputName]: value,
+    }));
+  };
+
+  const openChat = (value, key) => {
+    if (!chatArr.find(chat => chat.id === value)) {
       if (chatArr.length <= 2) {
-        setChatArr(prevChatArr => [...prevChatArr, value])
+        setChatArr(prevChatArr => [...prevChatArr, { id: value, name: key }])
         setChatCount(chatCount + 1)
       } else {
         chatArr.shift()
-        setChatArr(prevChatArr => [...prevChatArr, value])
+        setChatArr(prevChatArr => [...prevChatArr, { id: value, name: key }])
         setChatCount(chatCount - 1)
       }
     }
   }
 
- 
+  useEffect(() => {
+    setMessages('')
+    chatArr.map((value, key) => {
+      getMessages(value, key)
+    })
+  }, [chatArr])
 
   const getTime = (value, type) => {
     if (value?.seconds !== undefined && value?.nanoseconds !== undefined) {
@@ -80,23 +67,26 @@ function ChatBox() {
   };
 
   const closeChat = (chatID) => {
-    const updatedChatArr = chatArr.filter(chat => chat.chat_ID !== chatID);
-    setChatArr(updatedChatArr);
+    //   const updatedChatArr = chatArr.filter(chat => chat.chat_ID !== chatID);
+    //   setChatArr(updatedChatArr);
   };
 
-  const sendMessage = async () => {
-    if (usermessage.trim() === "") {
+  const sendMessage = async (key) => {
+    if (usermessage[key].trim() === "") {
       return;
     }
     const { uid, displayName, photoURL } = auth.currentUser;
-    await addDoc(collection(db, "chats/chats_dats/" + user.uid), {
-      text: usermessage,
+    await addDoc(collection(db, "chats/chats_dats/" + chatArr[key].id), {
+      text: usermessage[key],
       name: displayName,
       avatar: photoURL,
       createdAt: serverTimestamp(),
       uid,
     });
-    setusermessage("");
+    setusermessage(prevValues => ({
+      ...prevValues,
+      [key]: '',
+    }));
   }
 
   const closeChats = () => {
@@ -104,9 +94,11 @@ function ChatBox() {
     setChatArr([])
   }
 
-  useEffect(() => {
+
+
+  const getMessages = (value) => {
     const q = query(
-      collection(db, "chats/chats_dats/" + user.uid),
+      collection(db, "chats/chats_dats/" + value.id),
       orderBy("createdAt", "desc"),
       limit(50)
     );
@@ -118,16 +110,20 @@ function ChatBox() {
       const sortedMessages = fetchedMessages.sort(
         (a, b) => a.createdAt - b.createdAt
       );
-      setMessages(sortedMessages);
+      setMessages(prevChatArr => [...prevChatArr, { id: chatArr.indexOf(value), data: sortedMessages }])
     });
     return () => unsubscribe();
-  }, []);
+  }
 
   useEffect(() => {
+    console.log(messages);
+  }, [messages])
+
+  const getChatInformation = () => {
     try {
       axios.get('./chats').then(res => {
         if (res.data.status === 200) {
-          setUserChats(res.data);
+          setUserChats(res.data.data);
           if (userChats.length > 0) {
             userChats.map(value => {
               if (value === user.uid) {
@@ -136,75 +132,75 @@ function ChatBox() {
                 console.log('no chats are there hence we need to create a new chat !');
               }
             })
-          } else {
-            console.log('data is not a array that is ', typeof (res.data));
           }
         }
       })
     } catch (error) {
       console.log(error);
     }
-  })
+  }
+
+  useEffect(() => {
+    getChatInformation()
+  }, [])
 
   // post-/updatechat/{id} 
 
-  const createNewChat = () => {
-    if (userChats.length === 0){
-      // Post - /addchats
+  const createNewChat = (e) => {
+    e.preventDefault();
+    const dataSet = {
+      // input details data
+      customer_collection_id: user.uid + userChats.length,
+      supplier_id: '',
+      supplier_name: '',
+      group_chat: '',
+      customer_name: user.displayName,
+      status: "pending",
+      chat_created_date: '',
+      customer_mail_id: user.email,
+      supplier_mail_id: '',
+      supplier_added_date: '',
+      comments: '',
+      chat_name: `chat ${userChats.length}`
+    };
+
+    if (userChats.length >= 1) {
+      axios.post('./addchats', dataSet).then(
+        res => {
+          if (res.data.status === 200) {
+            alert("chat added successfully")
+            getChatInformation()
+          } else {
+            alert("error in adding chat")
+          }
+        }
+      )
+    } else {
+      axios.post('./addchats', dataSet).then(
+        res => {
+          if (res.data.status === 200) {
+            alert("chat added successfully")
+            getChatInformation()
+          } else {
+            alert("error in adding chat")
+          }
+        }
+      )
     }
   }
 
-  /* 
-   e.preventDefault();
-        axios.defaults.withCredentials = true;
-        const dataset = {
-            username: registerUser.username,
-            email: registerUser.email,
-            password: registerUser.password,
-        };
-
-        console.log(dataset)
-
-        setLoginProcess(30);
-
-        axios.get('/sanctum/csrf-cookie').then(response => {
-
-            setLoginProcess(50);
-            axios.post('new-user-registration', dataset, {
-                xsrfHeaderName: "X-XSRF-TOKEN",
-                withCredentials: true
-            }).then(res => {
-
-                setLoginProcess(75);
-
-                if (res.data.status === 200) {
-                    console.log("Connection OK")
-                    // navigate('/main/landing')
-                    // setLoginProcess(100);
-                    setUserEmailSended(true)
-                    console.log(res.data.status)
-
-                    setLoginProcess(100);
-
-                    // navigate('/userLogin')
-
-
-                }
-  */
-
   return (
+    <div>
 
-    <>
-      <button className={`btn btn-primary border-0 chat_button chat_btn`} style={{ display: `${isOpen ? 'none' : 'block'}` }} onClick={() => { setIsOpen(!isOpen) }}>
-        <p className='m-0 p-1'>
-          <FontAwesomeIcon icon={faComments} className='mx-1' />
-          chat with us</p>
+      <button className={`btn btn-primary border-0 chat_button d-flex justify-content-around`} style={{ display: `${isOpen ? 'none' : 'block'}` }} onClick={() => { setIsOpen(!isOpen) }}>
+        <p className='mr-2'><FontAwesomeIcon icon={faComments} /></p>
+        <p className=''>chat with us</p>
       </button >
 
       <div className='testing_process_need_to_give_valid_name'>
         <div className={`chat_area ${isOpen ? 'open' : 'close'}`}>
           <div className='user_head'>
-            <img src={user.photoURL} className='user_image' />
+            <img src={user.photoURL} className='user_image' alt='user profile' />
             <p className='user_name'>{user.displayName}</p>
             <p className='lost_login'>{Date(user.reloadUserInfo.lastLoginAt)}</p>
             <p className='close_icon'><FontAwesomeIcon icon={faCircleXmark} onClick={closeChats} /></p>
@@ -214,10 +210,10 @@ function ChatBox() {
               userChats.length > 0 &&
               userChats.map((value, key) => {
                 return (
-                  <div className='chat_contents user_head_update' onClick={() => { openChat(value) }} key={key}>
+                  <div className='chat_contents user_head_update' onClick={() => { openChat(value.customer_collection_id, key) }} key={key}>
                     <FontAwesomeIcon icon={faUserGroup} className='user_image' />
-                    <p className='user_name'>{user.displayName} & boat</p>
-                    <p className='lost_login'>May i know the update ( static )</p>
+                    <p className='user_name'>{value.customer_name} {value.chat_id}</p>
+                    <p className='lost_login'>{value.customer_collection_id}</p>
                   </div>
                 )
               })
@@ -231,38 +227,30 @@ function ChatBox() {
         <div className='main_content_chats'>
           {
             chatArr.map((value, key) => (
+
               <div className="text_area" key={key}>
                 <div className="chat_text_area_heading">
-                  <img src={pic} className="profile-pic" />
-                  <p className='profile_name'>{user.displayName} ({value.chat_ID}) </p>
+                  <img src={pic} className="profile-pic" alt='user profile' />
+                  {/* <p className='profile_name'>{userChats[key].chat_id} ({value.name}) </p> */}
+                  <p className='profile_name'>{value.id}</p>
                   <p className='profile_time'>{Date(user?.reloadUserInfo?.lastRefreshAt).slice(0, 24) || 'No valid date'}</p>
                   <span className='close_individual_chat' onClick={() => { closeChat(value.chat_ID) }}>
                     <FontAwesomeIcon icon={faRectangleXmark} className='fs-4' />
                   </span>
                 </div>
-                {/* Additional elements or code if needed */}
-
                 <div className="chats_content">
                   {
-                    messages.map((value, key) => {
+                    messages[key] !== undefined &&
+                    messages[key].data.map((value, key) => {
                       return (
                         <div className="chat_msg" key={key}>
                           <div className={`${value.uid === user.uid ? "chat-bubble left" : "chat-bubble right"}`}>
-                            <p className='chats'>{value.text}
-                              {
-                                value.uid !== user.uid &&
-                                <span>
-                                  (
-                                  {value.name || value.uid}
-                                  )
-                                </span>
-                              }
+                            <p className='chats'>
+                              <img src={value.avatar} />
+                              <p>{value.name}</p>
+                              <p>{value.text}</p>
                             </p>
-                            <span className="time">
-                              {
-                                getTime(value.createdAt, "value3")
-                              }
-                            </span>
+                            <span className="time">{getTime(value.createdAt, "value3")}</span>
                           </div>
                         </div>
                       )
@@ -270,8 +258,8 @@ function ChatBox() {
                   }
                 </div>
 
-                <div className="message_area input-group" onClick={sendMessage} >
-                  <input type="text" className="message col-9" value={usermessage} placeholder="Enter your message here..." onChange={(e) => setusermessage(e.target.value)} />
+                <div className="message_area input-group" onClick={()=>{sendMessage(key)}} >
+                  <input type="text" className="message col-9" value={usermessage[chatArr.indexOf(value)]} placeholder="Enter your message here..." onChange={(e) => handleChangeUserMessage(key, e.target.value)} />
                   <button className="send_button col-2"><FontAwesomeIcon icon={faPaperPlane} className="chat_send_icon" /></button>
                 </div>
 
@@ -280,7 +268,8 @@ function ChatBox() {
           }
         </div>
       </div>
-    </>
+
+    </div>
   )
 }
 
