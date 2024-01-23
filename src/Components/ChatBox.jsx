@@ -31,6 +31,7 @@ function ChatBox() {
   };
 
   const openChat = (value, key) => {
+    console.log(value,key);
     if (!chatArr.find(chat => chat.id === value)) {
       if (chatArr.length <= 2) {
         setChatArr(prevChatArr => [...prevChatArr, { id: value, name: key }])
@@ -43,11 +44,19 @@ function ChatBox() {
     }
   }
 
-  useEffect(() => {
+  // useEffect(() => {
+  //   console.log(chatArr);
+  // }, [chatArr])
+
+  const fetchMessagesTestingprocess = () => {
     setMessages('')
     chatArr.map((value, key) => {
       getMessages(value, key)
     })
+  }
+
+  useEffect(() => {
+    fetchMessagesTestingprocess()
   }, [chatArr])
 
   const getTime = (value, type) => {
@@ -67,8 +76,8 @@ function ChatBox() {
   };
 
   const closeChat = (chatID) => {
-    //   const updatedChatArr = chatArr.filter(chat => chat.chat_ID !== chatID);
-    //   setChatArr(updatedChatArr);
+    const updatedChatArr = chatArr.filter(chat => chat.name !== chatID);
+    setChatArr(updatedChatArr);
   };
 
   const sendMessage = async (key) => {
@@ -87,6 +96,7 @@ function ChatBox() {
       ...prevValues,
       [key]: '',
     }));
+    fetchMessagesTestingprocess()
   }
 
   const closeChats = () => {
@@ -115,24 +125,20 @@ function ChatBox() {
     return () => unsubscribe();
   }
 
-  useEffect(() => {
-    console.log(messages);
-  }, [messages])
-
   const getChatInformation = () => {
     try {
-      axios.get('./chats').then(res => {
+      axios.get(`/chats/${user.uid}`).then(res => {
         if (res.data.status === 200) {
           setUserChats(res.data.data);
-          if (userChats.length > 0) {
-            userChats.map(value => {
-              if (value === user.uid) {
-                console.log('already chat is existing');
-              } else {
-                console.log('no chats are there hence we need to create a new chat !');
-              }
-            })
-          }
+          // if (userChats.length > 0) {
+          //   userChats.map(value => {
+          //     if (value === user.uid) {
+          //       console.log('already chat is existing');
+          //     } else {
+          //       console.log('no chats are there hence we need to create a new chat !');
+          //     }
+          //   })
+          // }
         }
       })
     } catch (error) {
@@ -147,7 +153,9 @@ function ChatBox() {
   // post-/updatechat/{id} 
 
   const createNewChat = (e) => {
+
     e.preventDefault();
+
     const dataSet = {
       // input details data
       customer_collection_id: user.uid + userChats.length,
@@ -156,12 +164,13 @@ function ChatBox() {
       group_chat: '',
       customer_name: user.displayName,
       status: "pending",
-      chat_created_date: '',
+      chat_created_date: new Date(),
       customer_mail_id: user.email,
       supplier_mail_id: '',
       supplier_added_date: '',
       comments: '',
-      chat_name: `chat ${userChats.length}`
+      chat_name: `chat ${userChats.length}`,
+      customer_id: user.uid
     };
 
     if (userChats.length >= 1) {
@@ -169,7 +178,6 @@ function ChatBox() {
         res => {
           if (res.data.status === 200) {
             alert("chat added successfully")
-            getChatInformation()
           } else {
             alert("error in adding chat")
           }
@@ -180,7 +188,6 @@ function ChatBox() {
         res => {
           if (res.data.status === 200) {
             alert("chat added successfully")
-            getChatInformation()
           } else {
             alert("error in adding chat")
           }
@@ -209,10 +216,21 @@ function ChatBox() {
             {
               userChats.length > 0 &&
               userChats.map((value, key) => {
+                {
+                  // console.log(key)
+                  console.log(value)
+                }
                 return (
                   <div className='chat_contents user_head_update' onClick={() => { openChat(value.customer_collection_id, key) }} key={key}>
                     <FontAwesomeIcon icon={faUserGroup} className='user_image' />
-                    <p className='user_name'>{value.customer_name} {value.chat_id}</p>
+                    <p className='user_name'>{value.customer_name}
+                      <span className='user_chat_count'>
+                        chat no :
+                        {value.chat_id}
+                      </span>
+                    </p>
+
+                    {/* <p className='lost_login'>{Date(value.created_at)}</p> */}
                     <p className='lost_login'>{value.customer_collection_id}</p>
                   </div>
                 )
@@ -231,25 +249,29 @@ function ChatBox() {
               <div className="text_area" key={key}>
                 <div className="chat_text_area_heading">
                   <img src={pic} className="profile-pic" alt='user profile' />
-                  {/* <p className='profile_name'>{userChats[key].chat_id} ({value.name}) </p> */}
-                  <p className='profile_name'>{value.id}</p>
-                  <p className='profile_time'>{Date(user?.reloadUserInfo?.lastRefreshAt).slice(0, 24) || 'No valid date'}</p>
-                  <span className='close_individual_chat' onClick={() => { closeChat(value.chat_ID) }}>
+                  <p className='profile_name'>{userChats[key].customer_name} {userChats[key].supplier_name} </p>
+                  {/* <p className='profile_time'>{Date(user?.reloadUserInfo?.lastRefreshAt).slice(0, 15) || 'No valid date'}</p> */}
+                  <p className='profile_time'>{value.id}</p>
+                  {/* <p className='profile_chat_count'> chat no : {userChats[key].chat_id} </p> */}
+                  <span className='close_individual_chat' onClick={() => { closeChat(value.name) }}>
                     <FontAwesomeIcon icon={faRectangleXmark} className='fs-4' />
                   </span>
                 </div>
                 <div className="chats_content">
+                  {
+                      console.log("messages",value)
+                  }
                   {
                     messages[key] !== undefined &&
                     messages[key].data.map((value, key) => {
                       return (
                         <div className="chat_msg" key={key}>
                           <div className={`${value.uid === user.uid ? "chat-bubble left" : "chat-bubble right"}`}>
-                            <p className='chats'>
+                            <div className='chats'>
                               <img src={value.avatar} />
                               <p>{value.name}</p>
                               <p>{value.text}</p>
-                            </p>
+                            </div>
                             <span className="time">{getTime(value.createdAt, "value3")}</span>
                           </div>
                         </div>
@@ -258,7 +280,7 @@ function ChatBox() {
                   }
                 </div>
 
-                <div className="message_area input-group" onClick={()=>{sendMessage(key)}} >
+                <div className="message_area input-group" onClick={() => { sendMessage(key) }} >
                   <input type="text" className="message col-9" value={usermessage[chatArr.indexOf(value)]} placeholder="Enter your message here..." onChange={(e) => handleChangeUserMessage(key, e.target.value)} />
                   <button className="send_button col-2"><FontAwesomeIcon icon={faPaperPlane} className="chat_send_icon" /></button>
                 </div>

@@ -55,6 +55,11 @@
   grid-template-areas:
     'image username closeIcon'
     'image lastlogin closeIcon';
+  text-transform: capitalize;
+}
+
+.user_head_update .user_chat_count {
+  grid-area: userchatcount;
 }
 
 .user_head .user_image,
@@ -71,6 +76,12 @@
 .user_head_update .user_name {
   margin: 0 10px 0 0;
   grid-area: username;
+}
+
+.user_head_update .user_name span {
+  color: white;
+  font-size: 10px;
+  float: right;
 }
 
 .user_head_update .user_name {
@@ -144,8 +155,8 @@
   border-radius: 5px;
   display: grid;
   grid-template-areas:
-    'profilePic profileName . . closeIcon'
-    'profilePic profileTime . . closeIcon';
+    'profilePic profileName .  closeIcon'
+    'profilePic profileTime profileChatCount closeIcon';
   padding: 10px 10px 20px 10px;
   height: 15%;
 }
@@ -160,6 +171,12 @@
 .chat_text_area_heading .profile_name {
   grid-area: profileName;
   font-size: 15px;
+  margin: auto 0;
+}
+
+.chat_text_area_heading .profile_chat_count {
+  grid-area: profileChatCount;
+  font-size: 10px;
   margin: auto 0;
 }
 
@@ -365,39 +382,7 @@
 }
 
 
-.customer_details {
-  margin: 10px;
-  display: grid;
-  grid-template-areas:
-    'userimage username usertime'
-    'userimage usermessage usermessage'
-  ;
-  border-radius: 20px;
-  padding: 5px;
-}
 
-.user_image {
-  margin: auto;
-  width: 70px;
-  height: 70px;
-  border-radius: 10px;
-  grid-area: userimage;
-}
-
-.user_name {
-  grid-area: username;
-  padding-left: 10px;
-  font-weight: 600;
-}
-
-.user_last_msg {
-  grid-area: usermessage;
-  padding-left: 10px;
-}
-
-.last_time {
-  grid-area: usertime;
-}
 
 .main_content {
   width: 98%;
